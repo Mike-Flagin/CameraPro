@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">Camera Pro</string>
+    <string name="app_name" translatable="false">Camera Pro</string>
+
+    <string name="request_permission" translatable="false">This sample needs camera permission.</string>
+    <string name="camera_error" translatable="false">This device doesn\'t support Camera2 API.</string>
+    <string name="intro_message" translatable="false">
+        <![CDATA[
+
+
+            This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures.
+
+
+        ]]>
+</string>
 </resources>
