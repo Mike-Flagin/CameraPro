@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Camera Pro</string>
+    <string name="camera_not_found">Ошибка: Камера не найдена</string>
+    <string name="permission_denied">Вы не можете использовать это приложение без этого разрешения</string>
 </resources>
