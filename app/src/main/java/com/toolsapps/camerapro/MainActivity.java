@@ -1,7 +1,6 @@
 package com.toolsapps.camerapro;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
@@ -21,6 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         cameraPreview = findViewById(R.id.camera_preview);
         cameraPreview.setSurfaceTextureListener(textureListener);
@@ -228,5 +233,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return camerasIds;
     }
+
+    //TODO:Fix permission accepting bug
 
 }
