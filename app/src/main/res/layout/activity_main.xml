@@ -32,6 +32,17 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@drawable/button_round"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:id="@+id/photo_button"/>
+
+        <ToggleButton
+            android:layout_width="25dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/button_flash"
+            android:layout_marginEnd="50dp"
+            android:background="@color/Black"
+            android:drawableTop="@drawable/button_flash"/>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

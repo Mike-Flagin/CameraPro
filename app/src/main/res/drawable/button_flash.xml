@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:drawable="@drawable/flash_on">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/Black"/>
+            <size android:width="15dp" android:height="10dp"/>
+        </shape>
+    </item>
+    <item android:state_checked="false" android:drawable="@drawable/flash_off">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/Black"/>
+            <size android:width="15dp" android:height="10dp"/>
+        </shape>
+    </item>
+</selector>

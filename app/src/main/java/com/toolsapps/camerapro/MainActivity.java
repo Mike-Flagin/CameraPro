@@ -17,17 +17,21 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Arrays;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ToggleButton.OnCheckedChangeListener {
     private TextureView cameraPreview;
     private int currentCameraId = 0;
     private CameraDevice currentCam;
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private ImageReader imageReader;
+    private String[] cameraIds;
+    private String filepath = "/sdcard/DCIM/CameraPro/";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+    CameraManager mCameraManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +62,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         cameraPreview = findViewById(R.id.camera_preview);
         cameraPreview.setSurfaceTextureListener(textureListener);
+        cameraIds = getCamerasIds();
 
-        DrawPreview(getCamerasIds());
+        // Set Listeners
+        findViewById(R.id.photo_button).setOnClickListener(this);
+        ((ToggleButton) findViewById(R.id.button_flash)).setOnCheckedChangeListener(this);
+
+        DrawPreview(cameraIds);
     }
 
     public void DrawPreview(String[] camerasIds) {
@@ -65,10 +77,49 @@ public class MainActivity extends AppCompatActivity {
                  currentCameraId = 0;
              } else {
                  openCamera(camerasIds[currentCameraId]);
+                 mCameraManager = (CameraManager) MainActivity.this.getSystemService(Context.CAMERA_SERVICE);
              }
          } else {
              Toast.makeText(this, R.string.camera_not_found, Toast.LENGTH_SHORT).show();
          }
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.photo_button:
+                makePhoto();
+                break;
+            default:
+                Log.d("Buttons", "BUTTONS_ERROR");
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton button, boolean checked) {
+        switch(button.getId()) {
+            case R.id.button_flash:
+                    changeFlash(checked);
+                break;
+        }
+    }
+
+    private void changeFlash(boolean state) {
+        if(state) {
+            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
+        } else {
+            captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+        }
+    }
+
+
+    private void makePhoto() {
+        //TODO: GPS Location
+        // captureRequestBuilder.set(CaptureRequest.JPEG_GPS_LOCATION,);
+        captureRequestBuilder.set(CaptureRequest.JPEG_QUALITY, (byte)95);
+
+
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -147,6 +198,8 @@ public class MainActivity extends AppCompatActivity {
 
     protected void updatePreview() {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+        captureRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
+        captureRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
@@ -195,11 +248,13 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                // close the app
-                Toast.makeText(MainActivity.this, R.string.permission_denied, Toast.LENGTH_LONG).show();
-            }
+        switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(MainActivity.this, R.string.permission_denied, Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                break;
         }
     }
     @Override
